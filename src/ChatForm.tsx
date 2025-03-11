@@ -15,9 +15,7 @@ import { useAuth } from './lib/useAuth';
 import { useEffect } from 'react';
 
 const formSchema = z.object({
-  body: z.string().nonempty({
-    message: '내용을 입력해주세요',
-  }),
+  body: z.string().nonempty(),
 });
 
 export default function ChatForm() {
@@ -52,7 +50,7 @@ export default function ChatForm() {
             </FormControl>
           </FormItem>
         )} />
-        <Button disabled={!user} type='submit' size='icon'>
+        <Button disabled={!user || !formState.isValid} type='submit' size='icon'>
           <ArrowUp />
         </Button>
       </form>
