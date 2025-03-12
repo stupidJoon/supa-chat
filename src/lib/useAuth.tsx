@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       setUser(data.session?.user ?? null);
     })();
-  });
+  }, []);
 
   return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
 }

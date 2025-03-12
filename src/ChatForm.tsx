@@ -43,22 +43,14 @@ export default function ChatForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='flex gap-2'>
-        <FormField
-          control={form.control}
-          name='body'
-          render={({ field }) => (
+        <FormField name={'body'} control={form.control} render={({ field }) => (
             <FormItem className='flex-1'>
               <FormControl>
                 <Input {...field} />
               </FormControl>
             </FormItem>
-          )}
-        />
-        <Button
-          disabled={!user || !formState.isValid}
-          type='submit'
-          size='icon'
-        >
+        )} />
+        <Button type='submit' size='icon' disabled={!user || !formState.isValid}>
           <ArrowUp />
         </Button>
       </form>
