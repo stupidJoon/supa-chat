@@ -1,7 +1,7 @@
-import { ModeToggle } from './components/ui/mode-toggle';
-import { supabase } from './lib/supabase';
-import { Button } from './components/ui/button';
-import { useAuth } from './lib/useAuth';
+import { supabase } from '@/lib/supabase.ts';
+import { useAuth } from '@/lib/useAuth.tsx';
+import { ModeToggle } from '@/components/ui/mode-toggle.tsx';
+import { Button } from '@/components/ui/button.tsx';
 
 export default function Header() {
   return (
@@ -40,4 +40,3 @@ function Auth() {
       <Button variant='outline' onClick={signOut}>로그아웃</Button>
     );
 }
-

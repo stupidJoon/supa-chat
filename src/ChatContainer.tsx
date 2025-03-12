@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from './lib/useAuth';
-import { supabase } from './lib/supabase';
 import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
+import { supabase } from '@/lib/supabase.ts';
+import { useAuth } from '@/lib/useAuth.tsx';
+
 
 type ChatType = {
   id: number;

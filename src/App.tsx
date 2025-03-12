@@ -1,8 +1,8 @@
 import '@/App.css';
-import ChatForm from './ChatForm';
-import ChatContainer from './ChatContainer';
-import Header from './Header';
-import { AuthProvider } from './lib/useAuth';
+import { AuthProvider } from '@/lib/useAuth.tsx';
+import Header from '@/Header.tsx';
+import ChatContainer from '@/ChatContainer.tsx';
+import ChatForm from '@/ChatForm.tsx';
 
 export default function App() {
   return (
@@ -17,4 +17,3 @@ export default function App() {
     </div>
   );
 }
-

@@ -1,18 +1,18 @@
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from "@/components/ui/button"
+import { ArrowUp } from 'lucide-react';
+import { supabase } from '@/lib/supabase.ts';
+import { useAuth } from '@/lib/useAuth.tsx';
+import { Button } from '@/components/ui/button.tsx';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { ArrowUp } from 'lucide-react';
-import { supabase } from './lib/supabase';
-import { useAuth } from './lib/useAuth';
-import { useEffect } from 'react';
+} from '@/components/ui/form.tsx';
+import { Input } from '@/components/ui/input.tsx';
 
 const formSchema = z.object({
   body: z.string().nonempty(),
@@ -38,19 +38,27 @@ export default function ChatForm() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const res = await supabase.from('chat').insert({ body: values.body });
     console.log(res);
-  }
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='flex gap-2'>
-        <FormField control={form.control} name='body' render={({ field }) => (
-          <FormItem className='flex-1'>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-          </FormItem>
-        )} />
-        <Button disabled={!user || !formState.isValid} type='submit' size='icon'>
+        <FormField
+          control={form.control}
+          name='body'
+          render={({ field }) => (
+            <FormItem className='flex-1'>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <Button
+          disabled={!user || !formState.isValid}
+          type='submit'
+          size='icon'
+        >
           <ArrowUp />
         </Button>
       </form>
