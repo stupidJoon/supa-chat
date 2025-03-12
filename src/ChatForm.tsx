@@ -50,7 +50,7 @@ export default function ChatForm() {
               </FormControl>
             </FormItem>
         )} />
-        <Button type='submit' size='icon' disabled={!user || !formState.isValid}>
+        <Button type='submit' size='icon' disabled={!user || !formState.isValid || formState.isSubmitting}>
           <ArrowUp />
         </Button>
       </form>
