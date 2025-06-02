@@ -1,7 +1,7 @@
 import { DurableObject } from 'cloudflare:workers';
 
 export class ChatDurableObject extends DurableObject<Env> {
-	sql: SqlStorage;
+  sql: SqlStorage;
 
 	constructor(ctx: DurableObjectState, env: Env) {
 		super(ctx, env);
@@ -17,7 +17,7 @@ export class ChatDurableObject extends DurableObject<Env> {
 		`);
 	}
 
-	async getChats() {
+	getChats() {
 		const chats = this.sql.exec('SELECT * FROM chat').toArray();
 		return chats;
 	}
@@ -45,7 +45,8 @@ export class ChatDurableObject extends DurableObject<Env> {
 		this.sql.exec('INSERT INTO chat (body, author) VALUES (?, ?)', body, ip);
 		const { id } = this.sql.exec('SELECT last_insert_rowid() as id').one();
 
-		const connections = this.ctx.getWebSockets()
+		const connections = this.ctx
+			.getWebSockets()
 			.filter((connection) => connection.readyState === 1)
 			.map((connection) => ({ connection, ...connection.deserializeAttachment() }));
 		connections.forEach(({ connection }) => connection.send(JSON.stringify({ id, author: ip, body })));
@@ -64,18 +65,16 @@ export default {
 		console.log(url.pathname);
 		if (url.pathname === '/ws') {
 			return stub.fetch(request);
-		}
-		else if (url.pathname === '/chat') {
-			const chats = await stub.getChats();
+		} else if (url.pathname === '/chat') {
+			const chats = stub.getChats();
 			return new Response(JSON.stringify(chats), {
 				headers: {
 					'Content-Type': 'application/json',
 					'Access-Control-Allow-Origin': '*',
 				},
 			});
-		}
-		else {
-			return new Response("404 Not Found", { status: 404 });
+		} else {
+			return new Response('404 Not Found', { status: 404 });
 		}
 	},
 } satisfies ExportedHandler<Env>;
