@@ -3,8 +3,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowUp } from 'lucide-react';
-import { supabase } from '@/lib/supabase.ts';
-import { useAuth } from '@/lib/useAuth.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import {
   Form,
@@ -13,13 +11,15 @@ import {
   FormItem,
 } from '@/components/ui/form.tsx';
 import { Input } from '@/components/ui/input.tsx';
+import { ws } from '@/lib/cloudflare.ts';
+import { useAuth } from '@/lib/useAuth.tsx';
 
 const formSchema = z.object({
   body: z.string().nonempty(),
 });
 
 export default function ChatForm() {
-  const { user } = useAuth();
+  const auth = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,8 +36,7 @@ export default function ChatForm() {
   }, [formState, reset]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const res = await supabase.from('chat').insert({ body: values.body });
-    console.log(res);
+    ws.send(JSON.stringify({ body: values.body }));
   };
 
   return (
@@ -50,7 +49,7 @@ export default function ChatForm() {
               </FormControl>
             </FormItem>
         )} />
-        <Button type='submit' size='icon' disabled={!user || !formState.isValid || formState.isSubmitting}>
+        <Button type='submit' size='icon' disabled={!auth.ip || !formState.isValid || formState.isSubmitting}>
           <ArrowUp />
         </Button>
       </form>

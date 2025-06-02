@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { clsx } from 'clsx';
-import { supabase } from '@/lib/supabase.ts';
 import { useAuth } from '@/lib/useAuth.tsx';
+import { ws } from '@/lib/cloudflare.ts';
 
 
 type ChatType = {
@@ -14,38 +13,29 @@ type ChatType = {
 };
 
 export default function ChatContainer() {
-  const { user } = useAuth();
+  const auth = useAuth();
   const [chats, setChats] = useState<ChatType[]>([]);
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase.from('chat').select();
-      setChats(data ?? []);
-      console.log(data);
-    })();
+    fetch(import.meta.env.VITE_CF_CHAT_URL)
+      .then((res) => res.json())
+      .then((json) => setChats(json));
   }, []);
 
   useEffect(() => {
-    const changes = supabase.channel('chat-db-changes').on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'chat' },
-      (payload: RealtimePostgresChangesPayload<ChatType>) => {
-        console.log(payload);
-        if (payload.eventType !== 'INSERT') throw new Error('Not Insert Event!');
-        setChats((prev) => [...prev, payload.new]);
-      },
-    ).subscribe();
-
-    return () => {
-      changes.unsubscribe();
+    const onMessage = (ev: MessageEvent<string>) => {
+      const chat = JSON.parse(ev.data);
+      setChats((prev) => [...prev, chat]);
     }
+    ws.addEventListener('message', onMessage);
+    return () => ws.removeEventListener('message', onMessage);
   }, []);
 
   return (
     <div className='flex-1 flex flex-col-reverse p-2 overflow-y-auto'>
       <div className='flex flex-col gap-2'>
         {chats.map((chat) => {
-          const isMine = chat.author === user?.id;
+          const isMine = chat.author === auth.ip;
           return (
             <div className={clsx(isMine && 'flex flex-col items-end')} key={chat.id}>
               <p className='text-sm text-muted-foreground'>{chat.author}</p>
